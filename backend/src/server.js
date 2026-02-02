@@ -1,5 +1,13 @@
 import dotenv from "dotenv";
-dotenv.config();
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Needed for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Explicitly load .env from backend root
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 import app from "./app.js";
 import { connectDB } from "./config/db.js";
