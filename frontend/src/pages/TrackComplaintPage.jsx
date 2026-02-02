@@ -90,11 +90,17 @@ export default function TrackComplaintPage() {
     handleSearch();
   };
 
-  const formatDate = (date) =>
-    new Date(date).toLocaleString("en-US", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    });
+  const formatDate = (date) => {
+    if (!date) return 'Not updated yet';
+    try {
+      return new Date(date).toLocaleString("en-US", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      });
+    } catch (error) {
+      return 'Invalid date';
+    }
+  };
 
   return (
     <PublicLayout>
