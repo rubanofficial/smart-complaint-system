@@ -36,7 +36,7 @@ export const authService = {
     return localStorage.getItem("token");
   },
 
-  getCurrentAdmin() {
+  async getCurrentAdmin() {
     const admin = localStorage.getItem("admin");
     return admin ? JSON.parse(admin) : null;
   },
