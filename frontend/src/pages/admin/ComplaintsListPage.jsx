@@ -155,84 +155,86 @@ export default function ComplaintsListPage() {
       </Card>
 
       {/* Table */}
-      <Card>
+      <Card className="border-2 border-black shadow-lg">
         <CardContent className="p-0">
           {isLoading ? (
             <div className="p-8 text-center text-muted-foreground">Loading...</div>
           ) : complaints.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">No complaints found</div>
           ) : (
-            <Table className="w-full">
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-1/6 text-left">Complaint ID</TableHead>
-                  <TableHead className="w-1/12 text-left">Type</TableHead>
-                  <TableHead className="w-1/8 text-left">Category</TableHead>
-                  <TableHead className="w-1/12 text-left">Priority</TableHead>
-                  <TableHead className="w-1/12 text-left">Status</TableHead>
-                  <TableHead className="w-1/12 text-left">Date</TableHead>
-                  <TableHead className="w-1/10 text-right pr-4">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {complaints.map((complaint) => (
-                  <TableRow key={complaint.complaintId} className="hover:bg-muted/50">
-                    <TableCell className="w-1/6 font-mono text-xs py-3 text-left">
-                      {complaint.complaintId}
-                    </TableCell>
-                    <TableCell className="w-1/12 py-3 text-left">
-                      <div className="flex items-center gap-1.5">
-                        {complaint.isAnonymous ? (
-                          <>
-                            <UserX className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                            <span className="text-xs">Anonymous</span>
-                          </>
-                        ) : (
-                          <>
-                            <User className="h-4 w-4 text-primary flex-shrink-0" />
-                            <span className="text-xs">Identified</span>
-                          </>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="w-1/8 py-3 text-left">
-                      <div className="flex items-center gap-1.5">
-                        {complaint.category === 'safety' && (
-                          <Shield className="h-4 w-4 text-warning flex-shrink-0" />
-                        )}
-                        <span className="capitalize text-xs">
-                          {complaint.category || 'Uncategorized'}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="w-1/12 py-3 text-left">
-                      {complaint.mlOutput && (
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-white text-black border-2 border-black">
+                    <th className="w-1/6 text-left px-4 py-4 font-semibold border-r-2 border-black">Complaint ID</th>
+                    <th className="w-1/12 text-left px-4 py-4 font-semibold border-r-2 border-black">Type</th>
+                    <th className="w-1/8 text-left px-4 py-4 font-semibold border-r-2 border-black">Category</th>
+                    <th className="w-1/12 text-left px-4 py-4 font-semibold border-r-2 border-black">Priority</th>
+                    <th className="w-1/12 text-left px-4 py-4 font-semibold border-r-2 border-black">Status</th>
+                    <th className="w-1/12 text-left px-4 py-4 font-semibold border-r-2 border-black">Date</th>
+                    <th className="w-1/10 text-right px-4 py-4 font-semibold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {complaints.map((complaint, idx) => (
+                    <tr key={complaint.complaintId} className="border-b-2 border-black hover:bg-gray-50 transition-colors bg-white">
+                      <td className="w-1/6 font-mono text-xs px-4 py-4 border-r-2 border-black text-left">
+                        {complaint.complaintId}
+                      </td>
+                      <td className="w-1/12 px-4 py-4 border-r-2 border-black text-left">
                         <div className="flex items-center gap-1.5">
-                          {(complaint.mlOutput.priority === 'high' || complaint.mlOutput.priority === 'critical') && (
-                            <AlertTriangle className="h-4 w-4 text-destructive flex-shrink-0" />
+                          {complaint.isAnonymous ? (
+                            <>
+                              <UserX className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                              <span className="text-xs">Anonymous</span>
+                            </>
+                          ) : (
+                            <>
+                              <User className="h-4 w-4 text-primary flex-shrink-0" />
+                              <span className="text-xs">Identified</span>
+                            </>
                           )}
-                          <PriorityBadge priority={complaint.mlOutput.priority} />
                         </div>
-                      )}
-                    </TableCell>
-                    <TableCell className="w-1/12 py-3 text-left">
-                      <StatusBadge status={complaint.status} />
-                    </TableCell>
-                    <TableCell className="w-1/12 text-xs text-muted-foreground py-3 text-left">
-                      {formatDate(complaint.createdAt)}
-                    </TableCell>
-                    <TableCell className="w-1/10 text-right py-3 pr-4">
-                      <Link to={`/admin/complaints/${complaint.complaintId}`}>
-                        <Button variant="ghost" size="sm" className="gap-1.5 h-8">
-                          <Eye className="h-4 w-4" />
-                          <span className="text-xs">View</span>
-                        </Button>
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                      </td>
+                      <td className="w-1/8 px-4 py-4 border-r-2 border-black text-left">
+                        <div className="flex items-center gap-1.5">
+                          {complaint.category === 'safety' && (
+                            <Shield className="h-4 w-4 text-warning flex-shrink-0" />
+                          )}
+                          <span className="capitalize text-xs">
+                            {complaint.category || 'Uncategorized'}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="w-1/12 px-4 py-4 border-r-2 border-black text-left">
+                        {complaint.mlOutput && (
+                          <div className="flex items-center gap-1.5">
+                            {(complaint.mlOutput.priority === 'high' || complaint.mlOutput.priority === 'critical') && (
+                              <AlertTriangle className="h-4 w-4 text-destructive flex-shrink-0" />
+                            )}
+                            <PriorityBadge priority={complaint.mlOutput.priority} />
+                          </div>
+                        )}
+                      </td>
+                      <td className="w-1/12 px-4 py-4 border-r-2 border-black text-left">
+                        <StatusBadge status={complaint.status} />
+                      </td>
+                      <td className="w-1/12 text-xs text-muted-foreground px-4 py-4 border-r-2 border-black text-left">
+                        {formatDate(complaint.createdAt)}
+                      </td>
+                      <td className="w-1/10 text-right px-4 py-4">
+                        <Link to={`/admin/complaints/${complaint.complaintId}`}>
+                          <Button variant="ghost" size="sm" className="gap-1.5 h-8 hover:bg-gray-200">
+                            <Eye className="h-4 w-4" />
+                            <span className="text-xs">View</span>
+                          </Button>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </CardContent>
       </Card>
