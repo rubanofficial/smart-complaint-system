@@ -30,8 +30,28 @@ export const complaintService = {
   },
 
   // Admin: get all complaints
-  async getAllComplaints(query = "") {
-    const res = await fetch(`${API_BASE}${query}`);
+  async getAllComplaints(filters = {}) {
+    // Build query parameters from filters object
+    const params = new URLSearchParams();
+
+    if (filters.status && filters.status !== "all") {
+      params.append("status", filters.status);
+    }
+    if (filters.category && filters.category !== "all") {
+      params.append("category", filters.category);
+    }
+    if (filters.priority && filters.priority !== "all") {
+      params.append("priority", filters.priority);
+    }
+    if (filters.page) {
+      params.append("page", filters.page);
+    }
+    if (filters.limit) {
+      params.append("limit", filters.limit);
+    }
+
+    const url = `${API_BASE}${params.toString() ? "?" + params.toString() : ""}`;
+    const res = await fetch(url);
 
     if (!res.ok) {
       throw new Error("Failed to fetch complaints");
@@ -69,53 +89,13 @@ export const complaintService = {
   // Admin: get dashboard metrics
   async getDashboardMetrics() {
     try {
-      const response = await this.getAllComplaints();
-      const complaints = Array.isArray(response) ? response : response.complaints || [];
+      const res = await fetch(`${API_BASE}/analytics`);
 
-      const statusBreakdown = {
-        submitted: 0,
-        in_review: 0,
-        resolved: 0,
-        rejected: 0,
-      };
+      if (!res.ok) {
+        throw new Error("Failed to fetch analytics");
+      }
 
-      let highPriorityCount = 0;
-      let safetyRelatedCount = 0;
-      let anonymousCount = 0;
-      let identifiedCount = 0;
-
-      complaints.forEach((complaint) => {
-        // Count status breakdown
-        if (statusBreakdown[complaint.status] !== undefined) {
-          statusBreakdown[complaint.status]++;
-        }
-
-        // Count high priority
-        if (complaint.mlOutput?.priority === "high" || complaint.mlOutput?.priority === "critical") {
-          highPriorityCount++;
-        }
-
-        // Count safety related
-        if (complaint.category === "safety") {
-          safetyRelatedCount++;
-        }
-
-        // Count anonymous vs identified
-        if (complaint.isAnonymous) {
-          anonymousCount++;
-        } else {
-          identifiedCount++;
-        }
-      });
-
-      return {
-        totalComplaints: complaints.length,
-        statusBreakdown,
-        highPriorityCount,
-        safetyRelatedCount,
-        anonymousCount,
-        identifiedCount,
-      };
+      return res.json();
     } catch (e) {
       console.error("Failed to fetch dashboard metrics:", e);
       throw e;

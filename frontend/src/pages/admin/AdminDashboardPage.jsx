@@ -10,6 +10,9 @@ import {
   XCircle,
   FileSearch,
   ArrowRight,
+  TrendingUp,
+  BarChart3,
+  Zap,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -109,12 +112,22 @@ export default function AdminDashboardPage() {
     },
   ];
 
+  // Sort categories by count descending
+  const topCategories = metrics.categoryBreakdown
+    ? [...metrics.categoryBreakdown].sort((a, b) => b.count - a.count).slice(0, 5)
+    : [];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <div>
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground mt-1">
+            Overview of your complaint management system
+          </p>
+        </div>
         <Link to="/admin/complaints">
-          <Button variant="outline" className="gap-2">
+          <Button className="gap-2">
             View All Complaints
             <ArrowRight className="h-4 w-4" />
           </Button>
@@ -143,65 +156,207 @@ export default function AdminDashboardPage() {
         ))}
       </div>
 
-      {/* Status Breakdown */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Status Breakdown</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {statusCards.map((item) => {
-              const count = metrics.statusBreakdown[item.status];
-              const percentage =
-                metrics.totalComplaints > 0
-                  ? Math.round((count / metrics.totalComplaints) * 100)
-                  : 0;
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* Status Breakdown */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Status Breakdown
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-2">
+              {statusCards.map((item) => {
+                const count = metrics.statusBreakdown[item.status];
+                const percentage =
+                  metrics.totalComplaints > 0
+                    ? Math.round((count / metrics.totalComplaints) * 100)
+                    : 0;
 
-              return (
-                <div
-                  key={item.status}
-                  className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg"
-                >
-                  <item.icon className={`h-8 w-8 ${item.color}`} />
-                  <div className="flex-1">
-                    <p className="text-sm text-muted-foreground">{item.label}</p>
-                    <p className="text-xl font-bold">{count}</p>
+                return (
+                  <div
+                    key={item.status}
+                    className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg hover:bg-muted transition"
+                  >
+                    <item.icon className={`h-8 w-8 ${item.color}`} />
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">{item.label}</p>
+                      <p className="text-xl font-bold">{count}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-semibold text-muted-foreground">
+                        {percentage}%
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-lg font-semibold text-muted-foreground">
-                      {percentage}%
-                    </p>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Resolution Metrics */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Resolution Metrics
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="p-4 bg-success/10 rounded-lg">
+              <p className="text-sm text-muted-foreground">Resolved</p>
+              <p className="text-3xl font-bold text-success">
+                {metrics.resolvedCount}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">complaints</p>
+            </div>
+            <div className="p-4 bg-info/10 rounded-lg">
+              <p className="text-sm text-muted-foreground">Avg Resolution Time</p>
+              <p className="text-3xl font-bold text-info">
+                {metrics.avgResolutionTime}h
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">hours</p>
+            </div>
+            <div className="p-4 bg-primary/10 rounded-lg">
+              <p className="text-sm text-muted-foreground">Resolution Rate</p>
+              <p className="text-3xl font-bold text-primary">
+                {metrics.totalComplaints > 0
+                  ? Math.round(
+                    (metrics.resolvedCount / metrics.totalComplaints) * 100
+                  )
+                  : 0}
+                %
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">of all complaints</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Top Categories */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Top Complaint Categories</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {topCategories.length > 0 ? (
+              <div className="space-y-3">
+                {topCategories.map((cat, idx) => (
+                  <div key={cat.category} className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <div className="flex justify-between mb-1">
+                        <p className="text-sm font-medium capitalize">
+                          {cat.category}
+                        </p>
+                        <p className="text-sm font-bold">{cat.count}</p>
+                      </div>
+                      <div className="w-full bg-muted rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full transition-all ${idx === 0
+                              ? "bg-primary"
+                              : idx === 1
+                                ? "bg-secondary"
+                                : idx === 2
+                                  ? "bg-accent"
+                                  : "bg-muted-foreground"
+                            }`}
+                          style={{
+                            width: `${(cat.count /
+                                (topCategories[0]?.count || 1)) *
+                              100
+                              }%`,
+                          }}
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground">No data available</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Priority Distribution */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Priority Distribution</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {Object.entries(metrics.priorityBreakdown).map(
+                ([priority, count]) => (
+                  <div key={priority} className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <div className="flex justify-between mb-1">
+                        <p className="text-sm font-medium capitalize">
+                          {priority}
+                        </p>
+                        <p className="text-sm font-bold">{count}</p>
+                      </div>
+                      <div className="w-full bg-muted rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full transition-all ${priority === "critical"
+                              ? "bg-destructive"
+                              : priority === "high"
+                                ? "bg-orange-500"
+                                : priority === "medium"
+                                  ? "bg-yellow-500"
+                                  : "bg-green-500"
+                            }`}
+                          style={{
+                            width: `${Math.max(
+                              (count / (metrics.totalComplaints || 1)) * 100,
+                              5
+                            )}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Quick Actions */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Quick Actions</CardTitle>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Zap className="h-5 w-5" />
+            Quick Actions
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-3">
             <Link to="/admin/complaints?status=submitted">
               <Button variant="outline" className="gap-2">
                 <Clock className="h-4 w-4" />
-                View New Complaints ({metrics.statusBreakdown.submitted})
+                New Complaints ({metrics.statusBreakdown.submitted})
               </Button>
             </Link>
-            <Link to="/admin/complaints?priority=high">
+            <Link to="/admin/complaints?status=in_review">
+              <Button variant="outline" className="gap-2">
+                <FileSearch className="h-4 w-4" />
+                In Review ({metrics.statusBreakdown.in_review})
+              </Button>
+            </Link>
+            <Link to="/admin/complaints?priority=critical">
               <Button variant="outline" className="gap-2">
                 <AlertTriangle className="h-4 w-4" />
-                High Priority ({metrics.highPriorityCount})
+                Critical ({metrics.priorityBreakdown.critical})
               </Button>
             </Link>
             <Link to="/admin/complaints?category=safety">
               <Button variant="outline" className="gap-2">
                 <Shield className="h-4 w-4" />
-                Safety Concerns ({metrics.safetyRelatedCount})
+                Safety ({metrics.safetyRelatedCount})
               </Button>
             </Link>
           </div>

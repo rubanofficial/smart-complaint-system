@@ -10,6 +10,7 @@ const complaintSchema = new mongoose.Schema(
             fullName: String,
             rollNumber: String,
             department: String,
+            contact: String,
         },
 
         category: {
@@ -24,6 +25,7 @@ const complaintSchema = new mongoose.Schema(
                 "financial",
                 "transport",
                 "library",
+                "administrative",
                 "other",
             ],
         },
@@ -35,6 +37,38 @@ const complaintSchema = new mongoose.Schema(
             default: "submitted",
             enum: ["submitted", "in_review", "resolved", "rejected"],
         },
+
+        adminRemarks: String,
+
+        files: [String],
+
+        mlOutput: {
+            category: String,
+            priority: {
+                type: String,
+                enum: ["low", "medium", "high", "critical"],
+                default: "medium",
+            },
+            sentiment: String,
+            keywords: [String],
+            flags: {
+                urgent: { type: Boolean, default: false },
+                safety: { type: Boolean, default: false },
+                duplicate: { type: Boolean, default: false },
+            },
+            confidence: { type: Number, default: 0.8 },
+        },
+
+        auditLog: [
+            {
+                timestamp: Date,
+                action: String,
+                performedBy: String,
+                details: String,
+            },
+        ],
+
+        updatedBy: String,
     },
     { timestamps: true }
 );

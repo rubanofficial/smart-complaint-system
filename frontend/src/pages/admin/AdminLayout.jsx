@@ -69,7 +69,7 @@ export default function AdminLayout() {
             >
               <Shield className="h-8 w-8 text-sidebar-primary" />
               <div>
-                <h1 className="font-bold leading-tight">Grievance Portal</h1>
+                <h1 className="font-bold leading-tight">KEC Complaint Portal</h1>
                 <p className="text-xs text-sidebar-foreground/60">Admin Panel</p>
               </div>
             </Link>

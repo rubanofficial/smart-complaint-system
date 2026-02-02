@@ -10,6 +10,10 @@ import {
   Loader2,
   Save,
   Copy,
+  Smile,
+  Meh,
+  Frown,
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -262,79 +266,138 @@ export default function ComplaintDetailPage() {
           {complaint.mlOutput && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">AI Analysis</CardTitle>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Zap className="h-5 w-5 text-primary" />
+                  AI Analysis & Insights
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid sm:grid-cols-3 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Priority</p>
-                    <div className="flex items-center gap-2 mt-1">
+              <CardContent className="space-y-6">
+                {/* Main Metrics Grid */}
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {/* Priority */}
+                  <div className="p-4 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                      Priority Level
+                    </p>
+                    <div className="flex items-center gap-2 mt-2">
                       {(complaint.mlOutput.priority === "high" ||
                         complaint.mlOutput.priority === "critical") && (
-                          <AlertTriangle className="h-4 w-4 text-destructive" />
+                          <AlertTriangle className="h-5 w-5 text-destructive" />
                         )}
-                      <span className="font-medium capitalize">
+                      {complaint.mlOutput.priority === "medium" && (
+                        <Zap className="h-5 w-5 text-warning" />
+                      )}
+                      {complaint.mlOutput.priority === "low" && (
+                        <Zap className="h-5 w-5 text-success" />
+                      )}
+                      <span className="font-bold text-lg capitalize">
                         {complaint.mlOutput.priority}
                       </span>
                     </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Confidence</p>
-                    <p className="font-medium mt-1">
+
+                  {/* Confidence */}
+                  <div className="p-4 rounded-lg bg-gradient-to-br from-secondary/10 to-secondary/5 border border-secondary/20">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                      Analysis Confidence
+                    </p>
+                    <p className="font-bold text-lg mt-2">
                       {Math.round(complaint.mlOutput.confidence * 100)}%
                     </p>
+                    <div className="w-full bg-muted rounded-full h-2 mt-2">
+                      <div
+                        className="h-2 rounded-full bg-secondary transition-all"
+                        style={{
+                          width: `${complaint.mlOutput.confidence * 100}%`,
+                        }}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Sentiment</p>
-                    <p className="font-medium capitalize mt-1">
-                      {complaint.mlOutput.sentiment}
+
+                  {/* Sentiment */}
+                  <div className="p-4 rounded-lg bg-gradient-to-br from-accent/10 to-accent/5 border border-accent/20">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                      Sentiment
+                    </p>
+                    <div className="flex items-center gap-2 mt-2">
+                      {complaint.mlOutput.sentiment === "positive" && (
+                        <Smile className="h-5 w-5 text-success" />
+                      )}
+                      {complaint.mlOutput.sentiment === "negative" && (
+                        <Frown className="h-5 w-5 text-destructive" />
+                      )}
+                      {complaint.mlOutput.sentiment === "neutral" && (
+                        <Meh className="h-5 w-5 text-muted-foreground" />
+                      )}
+                      <span className="font-bold capitalize">
+                        {complaint.mlOutput.sentiment}
+                      </span>
+                    </div>
+                    {complaint.mlOutput.sentimentScore !== undefined && (
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        Score: {complaint.mlOutput.sentimentScore}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Category Detection */}
+                  <div className="p-4 rounded-lg bg-gradient-to-br from-info/10 to-info/5 border border-info/20">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                      Detected Category
+                    </p>
+                    <p className="font-bold capitalize mt-2">
+                      {complaint.mlOutput.category || complaint.category || "Other"}
                     </p>
                   </div>
                 </div>
 
                 <Separator />
 
+                {/* Flags Section */}
                 <div>
-                  <p className="text-sm text-muted-foreground mb-2">Flags</p>
+                  <p className="text-sm font-semibold mb-3">Alert Flags</p>
                   <div className="flex flex-wrap gap-2">
                     {complaint.mlOutput.flags.urgent && (
-                      <span className="px-2 py-1 bg-destructive/10 text-destructive text-xs rounded-full font-medium">
+                      <span className="px-3 py-1 bg-destructive/20 text-destructive rounded-full font-medium text-xs flex items-center gap-1 border border-destructive/30">
+                        <AlertTriangle className="h-3 w-3" />
                         Urgent
                       </span>
                     )}
                     {complaint.mlOutput.flags.safety && (
-                      <span className="px-2 py-1 bg-warning/10 text-warning text-xs rounded-full font-medium">
+                      <span className="px-3 py-1 bg-warning/20 text-warning rounded-full font-medium text-xs flex items-center gap-1 border border-warning/30">
+                        <Shield className="h-3 w-3" />
                         Safety Related
                       </span>
                     )}
                     {complaint.mlOutput.flags.duplicate && (
-                      <span className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full font-medium">
-                        Possible Duplicate
+                      <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full font-medium text-xs border border-muted-foreground/30">
+                        ⚠️ Possible Duplicate
                       </span>
                     )}
                     {!complaint.mlOutput.flags.urgent &&
                       !complaint.mlOutput.flags.safety &&
                       !complaint.mlOutput.flags.duplicate && (
-                        <span className="text-sm text-muted-foreground">
-                          No special flags
+                        <span className="text-sm text-muted-foreground italic">
+                          ✓ No critical flags detected
                         </span>
                       )}
                   </div>
                 </div>
 
+                {/* Keywords Section */}
                 {complaint.mlOutput.keywords &&
                   complaint.mlOutput.keywords.length > 0 && (
                     <>
                       <Separator />
                       <div>
-                        <p className="text-sm text-muted-foreground mb-2">
-                          Keywords
+                        <p className="text-sm font-semibold mb-3">
+                          Extracted Keywords
                         </p>
                         <div className="flex flex-wrap gap-2">
                           {complaint.mlOutput.keywords.map((keyword, index) => (
                             <span
                               key={index}
-                              className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full"
+                              className="px-3 py-1 bg-primary/15 text-primary rounded-lg text-xs font-medium border border-primary/30"
                             >
                               {keyword}
                             </span>
