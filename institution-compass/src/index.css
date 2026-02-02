@@ -1,0 +1,149 @@
+/* Google font MUST be first */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Institutional Grievance Management System - Design System */
+
+@layer base {
+  :root {
+    /* Navy institutional palette */
+    --background: 210 20% 98%;
+    --foreground: 220 30% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 30% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 30% 15%;
+
+    --primary: 220 60% 25%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 15% 92%;
+    --secondary-foreground: 220 30% 20%;
+
+    --muted: 210 15% 95%;
+    --muted-foreground: 220 10% 45%;
+
+    --accent: 190 60% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 145 60% 40%;
+    --success-foreground: 0 0% 100%;
+    --warning: 40 90% 50%;
+    --warning-foreground: 220 30% 15%;
+    --info: 200 80% 50%;
+    --info-foreground: 0 0% 100%;
+
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 220 60% 25%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 220 30% 15%;
+    --sidebar-foreground: 210 20% 95%;
+    --sidebar-primary: 190 60% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 30% 22%;
+    --sidebar-accent-foreground: 210 20% 95%;
+    --sidebar-border: 220 30% 25%;
+    --sidebar-ring: 190 60% 50%;
+  }
+
+  .dark {
+    --background: 220 30% 10%;
+    --foreground: 210 20% 95%;
+    --card: 220 30% 14%;
+    --card-foreground: 210 20% 95%;
+    --popover: 220 30% 14%;
+    --popover-foreground: 210 20% 95%;
+    --primary: 190 60% 50%;
+    --primary-foreground: 220 30% 10%;
+    --secondary: 220 25% 20%;
+    --secondary-foreground: 210 20% 95%;
+    --muted: 220 25% 18%;
+    --muted-foreground: 210 15% 60%;
+    --accent: 190 60% 45%;
+    --accent-foreground: 220 30% 10%;
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 145 55% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 40 85% 55%;
+    --warning-foreground: 220 30% 10%;
+    --info: 200 75% 55%;
+    --info-foreground: 0 0% 100%;
+    --border: 220 25% 22%;
+    --input: 220 25% 22%;
+    --ring: 190 60% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  .institution-header {
+    @apply bg-primary text-primary-foreground py-4 px-6 shadow-md;
+  }
+
+  .status-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .status-submitted {
+    @apply bg-info/15 text-info;
+  }
+
+  .status-in-review {
+    @apply bg-warning/15 text-warning;
+  }
+
+  .status-resolved {
+    @apply bg-success/15 text-success;
+  }
+
+  .status-rejected {
+    @apply bg-destructive/15 text-destructive;
+  }
+
+  .card-institutional {
+    @apply bg-card border border-border rounded-lg shadow-sm;
+  }
+
+  .priority-high {
+    @apply text-destructive font-semibold;
+  }
+
+  .priority-medium {
+    @apply text-warning font-semibold;
+  }
+
+  .priority-low {
+    @apply text-muted-foreground;
+  }
+}
